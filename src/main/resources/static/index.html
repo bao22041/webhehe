@@ -29,10 +29,7 @@
             from{opacity:0; transform: translateY(16px) scale(.98);}
             to{opacity:1; transform: translateY(0) scale(1);}
         }
-        .title{
-            font-weight:800;
-            letter-spacing:.4px;
-        }
+        .title{ font-weight:800; letter-spacing:.4px; }
         .badge-soft{
             background: rgba(99,102,241,.18);
             border: 1px solid rgba(99,102,241,.25);
@@ -68,35 +65,16 @@
             background: rgba(255,255,255,.06);
             transform: translateY(-1px);
         }
-        .btn{
-            border-radius: 14px;
-            border: none;
-        }
-        .btn-primary{
-            background: linear-gradient(135deg,#6366f1,#a855f7);
-        }
-        .btn-warning{
-            color:#111827;
-            background: linear-gradient(135deg,#fbbf24,#f59e0b);
-        }
-        .btn-danger{
-            background: linear-gradient(135deg,#ef4444,#b91c1c);
-        }
+        .btn{ border-radius: 14px; border:none; }
+        .btn-primary{ background: linear-gradient(135deg,#6366f1,#a855f7); }
+        .btn-warning{ color:#111827; background: linear-gradient(135deg,#fbbf24,#f59e0b); }
+        .btn-danger{ background: linear-gradient(135deg,#ef4444,#b91c1c); }
         .btn i{ margin-right:6px; }
-        .hint{
-            font-size:.9rem;
-            color: rgba(229,231,235,.75);
-        }
+        .hint{ font-size:.9rem; color: rgba(229,231,235,.75); }
 
-        /* Toast */
         .toastx{
-            position: fixed;
-            top: 18px;
-            right: 18px;
-            z-index: 9999;
-            min-width: 260px;
-            display:none;
-            padding: 12px 14px;
+            position: fixed; top: 18px; right: 18px; z-index: 9999;
+            min-width: 260px; display:none; padding: 12px 14px;
             border-radius: 14px;
             background: rgba(16,185,129,.16);
             border: 1px solid rgba(16,185,129,.35);
@@ -108,14 +86,9 @@
             from{opacity:0; transform: translateX(12px);}
             to{opacity:1; transform: translateX(0);}
         }
-
-        /* Loading overlay */
         .overlay{
-            position: fixed;
-            inset: 0;
-            display:none;
-            align-items:center;
-            justify-content:center;
+            position: fixed; inset: 0;
+            display:none; align-items:center; justify-content:center;
             background: rgba(0,0,0,.35);
             z-index: 9998;
         }
@@ -127,11 +100,7 @@
             animation: spin 0.9s linear infinite;
         }
         @keyframes spin{ to{ transform: rotate(360deg);} }
-
-        /* Highlight row */
-        .flash{
-            animation: flash 1.2s ease;
-        }
+        .flash{ animation: flash 1.2s ease; }
         @keyframes flash{
             0%{ background: rgba(34,197,94,.22); }
             100%{ background: transparent; }
@@ -146,9 +115,9 @@
         <div>
             <div class="d-flex align-items-center gap-2">
                 <h3 class="title m-0">🎓 Quản lý sinh viên</h3>
-                <span class="badge-soft">CRUD + Search + Update</span>
+                <span class="badge-soft">Đúng chuẩn đề chấm điểm</span>
             </div>
-            <div class="hint mt-1">Thêm / sửa / xóa sinh viên – giao diện dark glass “ní ngầu”.</div>
+            <div class="hint mt-1">Thêm / sửa / xóa / tìm kiếm – API theo đúng annotation thầy yêu cầu.</div>
         </div>
         <button class="btn btn-primary" onclick="loadStudents()">
             <i class="fa-solid fa-rotate-right"></i> Tải lại
@@ -193,10 +162,8 @@
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toastx" id="toastx">✅ Thành công!</div>
 
-<!-- Loading -->
 <div class="overlay" id="overlay">
     <div class="spinner"></div>
 </div>
@@ -222,7 +189,7 @@
                     <label class="form-label text-white-50">Email</label>
                     <input id="editEmail" class="form-control" placeholder="Email">
                 </div>
-                <div class="hint">Mẹo: sửa xong bấm “Lưu thay đổi”. Dòng vừa sửa sẽ highlight.</div>
+                <div class="hint">Lưu ý: Update theo đề = POST /update/{id}.</div>
             </div>
             <div class="modal-footer border-0">
                 <button class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:14px;">Đóng</button>
@@ -243,7 +210,6 @@ let lastUpdatedId = null;
 function setLoading(isLoading){
     document.getElementById("overlay").style.display = isLoading ? "flex" : "none";
 }
-
 function toast(msg){
     const t = document.getElementById("toastx");
     t.textContent = msg;
@@ -261,7 +227,8 @@ function render(data) {
             <td>${escapeHtml(s.name ?? "")}</td>
             <td>${escapeHtml(s.email ?? "")}</td>
             <td class="d-flex gap-2 justify-content-center flex-wrap">
-                <button class="btn btn-warning btn-sm" onclick="openEdit(${s.id}, '${jsStr(s.name)}', '${jsStr(s.email)}')">
+                <button class="btn btn-warning btn-sm"
+                        onclick="openEdit(${s.id}, '${jsStr(s.name)}', '${jsStr(s.email)}')">
                     <i class="fa-solid fa-pen-to-square"></i> Sửa
                 </button>
                 <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">
@@ -271,7 +238,7 @@ function render(data) {
         </tr>`;
     });
     document.getElementById("studentTable").innerHTML = html;
-    lastUpdatedId = null; // reset after render
+    lastUpdatedId = null;
 }
 
 function loadStudents() {
@@ -300,22 +267,21 @@ function addStudent() {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(student)
     }).then(res => {
-        if (!res.ok) {
-            toast("❌ ID đã tồn tại hoặc lỗi dữ liệu");
-            return;
-        }
+        if (!res.ok) { toast("❌ ID đã tồn tại hoặc lỗi"); return; }
         toast("✅ Thêm thành công");
         clearAddForm();
         loadStudents();
     }).finally(()=> setLoading(false));
 }
 
+/* ✅ Theo đề: XÓA = POST /delete/{id} */
 function deleteStudent(id) {
     if (!confirm("Bạn chắc chắn muốn xóa?")) return;
 
     setLoading(true);
-    fetch(`${API}/${id}`, { method: "DELETE" })
-        .then(() => {
+    fetch(`${API}/delete/${id}`, { method: "POST" })
+        .then(res => {
+            if(!res.ok){ toast("❌ Xóa thất bại"); return; }
             toast("🗑️ Đã xóa");
             loadStudents();
         })
@@ -337,11 +303,11 @@ function openEdit(id, name, email){
     document.getElementById("editName").value = name;
     document.getElementById("editEmail").value = email;
 
-    const el = document.getElementById("editModal");
-    editModal = bootstrap.Modal.getOrCreateInstance(el);
+    editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById("editModal"));
     editModal.show();
 }
 
+/* ✅ Theo đề: UPDATE = POST /update/{id} */
 function saveEdit(){
     const id = Number(document.getElementById("editId").value);
     const name = document.getElementById("editName").value.trim();
@@ -353,15 +319,12 @@ function saveEdit(){
     }
 
     setLoading(true);
-    fetch(`${API}/${id}`, {
-        method: "PUT",
+    fetch(`${API}/update/${id}`, {
+        method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ id, name, email })
     }).then(res => {
-        if(!res.ok){
-            toast("❌ Cập nhật thất bại");
-            return;
-        }
+        if(!res.ok){ toast("❌ Cập nhật thất bại"); return; }
         toast("✏️ Cập nhật thành công");
         lastUpdatedId = id;
         editModal?.hide();
@@ -369,7 +332,7 @@ function saveEdit(){
     }).finally(()=> setLoading(false));
 }
 
-/* ===== Helpers ===== */
+/* Helpers */
 function clearAddForm(){
     document.getElementById("id").value = "";
     document.getElementById("name").value = "";
@@ -384,7 +347,6 @@ function escapeHtml(str){
         .replaceAll("'","&#039;");
 }
 function jsStr(str){
-    // safe for putting into onclick string
     return String(str ?? "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
 }
 

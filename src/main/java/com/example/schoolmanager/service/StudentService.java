@@ -10,15 +10,6 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository repository;
-    public Student update(Integer id, Student student) {
-    Student existing = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-
-    existing.setName(student.getName());
-    existing.setEmail(student.getEmail());
-
-    return repository.save(existing);
-}
 
     public StudentService(StudentRepository repository) {
         this.repository = repository;
@@ -28,7 +19,15 @@ public class StudentService {
         return repository.findAll();
     }
 
+    public Student getById(Integer id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên với ID = " + id));
+    }
+
     public Student save(Student student) {
+        if (student.getId() == null) {
+            throw new RuntimeException("ID không được để trống (vì bảng SQL không auto ID)");
+        }
         if (repository.existsById(student.getId())) {
             throw new RuntimeException("ID đã tồn tại");
         }
@@ -36,7 +35,20 @@ public class StudentService {
     }
 
     public void delete(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy sinh viên để xóa");
+        }
         repository.deleteById(id);
+    }
+
+    public Student update(Integer id, Student student) {
+        Student existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên để cập nhật"));
+
+        existing.setName(student.getName());
+        existing.setEmail(student.getEmail());
+        // ✅ Giữ ID theo path (không đổi khóa chính)
+        return repository.save(existing);
     }
 
     public List<Student> search(String name) {

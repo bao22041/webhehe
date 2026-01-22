@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Student {
 
     @Id
-    private Integer id;   // ❗ KHÔNG GeneratedValue
+    private Integer id; // ✅ id nhập tay theo bảng SQL
 
     private String name;
     private String email;
